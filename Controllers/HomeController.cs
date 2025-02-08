@@ -1,31 +1,21 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Stationery.Data;
 using Stationery.Models;
-using Microsoft.EntityFrameworkCore;
-
 
 namespace Stationery.Controllers
 {
     public class HomeController : Controller
     {
-        
-        private readonly StationeryContext _context;
+        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(StationeryContext context)
+        public HomeController(ILogger<HomeController> logger)
         {
-            _context = context;
+            _logger = logger;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var model = new HomeViewModel
-            {
-                
-                HeroImageUrl = "images/hero.jpg"
-            };
-
-            return View(model);
+            return View();
         }
 
         public IActionResult Privacy()

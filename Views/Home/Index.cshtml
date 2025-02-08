@@ -1,58 +1,8 @@
-﻿@model HomeViewModel
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
 
-<!-- Header -->
-<header class="sticky-top bg-white shadow-sm" style="z-index: 1000;">
-    <nav class="navbar navbar-expand-lg">
-        <button class="btn btn-outline-secondary me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
-            <i class="bi bi-list"></i> Категорії
-        </button>
-        <div class="container">
-            <div class="d-flex flex-grow-1 justify-content-center">
-                <form class="d-flex w-50">
-                    <input class="form-control me-2" type="search" placeholder="Пошук...">
-                </form>
-            </div>
-        </div>
-    </nav>
-</header>
-
-<!-- Hero Section -->
-<div class="hero-section position-relative" style="height: calc(100vh - 80px); margin-top: 80px;">
-    <div class="position-absolute w-100 h-100 bg-dark opacity-50" style="z-index: 1;"></div>
-    <img src="@Model.HeroImageUrl"
-         class="w-100 h-100 object-fit-cover position-absolute"
-         style="top: 0; left: 0; z-index: 0;"
-         alt="Hero Banner">
-    <div class="position-relative z-2 text-center text-white d-flex flex-column
-        justify-content-center align-items-center" style="height: 100%;">
-        <h1 class="display-4 mb-4">Підживлюйте свою творчість</h1>
-        <a class="btn btn-primary btn-lg" href="/product">Шопитись зараз</a>
-    </div>
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
-
-
-
-
-
-
-
-
-<!-- Footer -->
-<footer class="bg-dark text-white py-4">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <h5>Посилання на нас</h5>
-                <ul class="list-unstyled">
-                    <li><a href="/about" class="text-white">Про нас</li>
-                    <li><a href="/contact" class="text-white">Зв'язатися</a></li>
-                </ul>
-            </div>
-            <div class="col-md-6 text-end">
-                <h5>Підписатися на "Pen & Paper"</h5>
-                <a href="#" class="text-white me-2"><i class="bi bi-instagram"></i></a>
-                <a href="#" class="text-white"><i class="bi bi-pinterest"></i></a>
-            </div>
-        </div>
-    </div>
-</footer>

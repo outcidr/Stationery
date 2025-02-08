@@ -18,8 +18,7 @@ html {
 }
 
 body {
-    margin-bottom: 60px;
-    overflow-x: hidden;
+  margin-bottom: 60px;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
@@ -29,70 +28,4 @@ body {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
-}
-
-.navbar-logo {
-    height: 40px; 
-    width: auto; 
-}
-
-.object-fit-cover {
-    object-fit: cover;
-}
-
-.hero-section {
-    position: relative;
-    overflow: hidden;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-    .hero-section img {
-        object-position: center center; /* Focus on image center */
-    }
-
-
-
-
-
-.hero-content {
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
-}
-
-.dropdown-menu {
-    min-width: 200px;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-    z-index: 1050;
-}
-
-.dropdown-item:focus {
-    background-color: #f8f9fa;
-}
-
-.btn-link.text-dark:hover {
-    text-decoration: none;
-    color: #0d6efd !important;
-}
-
-.offcanvas-start {
-    width: 250px; 
-}
-
-.list-group-item {
-    border: none;
-    padding: 0.75rem 1.25rem;
-}
-
-    .list-group-item a {
-        color: #333;
-    }
-
-        .list-group-item a:hover {
-            color: #0d6efd;
-            text-decoration: underline;
-        }
-.category-image {
-    width: 35px;
-    height: auto; 
-    margin-right: 5px; 
-    vertical-align: middle; 
 }

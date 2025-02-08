@@ -1,37 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Stationery.Data;
-using Stationery.Models;
-using System;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<StationeryContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("StationeryContext") ?? throw new InvalidOperationException("Connection string 'StationeryContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddHttpContextAccessor();
-
 var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-
-    SeedData.Initialize(services);
-   
-
-}
-app.UseSession();
-app.UseStaticFiles();
-
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -52,7 +29,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 
 app.Run();

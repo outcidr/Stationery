@@ -1,0 +1,18 @@
+﻿@model IEnumerable<Stationery.Models.Category>
+
+<div class="sidebar-categories">
+    <ul class="list-group">
+        @foreach (var category in Model)
+        {
+            <li class="list-group-item">
+                <a href="/category/@category.CategoryId" class="text-decoration-none category-link">
+                    @if (!string.IsNullOrEmpty(category.ImageUrl))
+                    {
+                        <img src="~/images/categories/@category.ImageUrl" alt="@category.Name" class="category-image" />
+                    }
+                    @category.Name
+                </a>
+            </li>
+        }
+    </ul>
+</div>

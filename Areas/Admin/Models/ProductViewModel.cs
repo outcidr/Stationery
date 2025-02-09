@@ -1,4 +1,6 @@
-﻿namespace Stationery.Models.Admin
+﻿using Stationery.Models;
+
+namespace Stationery.Areas.Admin.Models
 {
     public class ProductViewModel
     {

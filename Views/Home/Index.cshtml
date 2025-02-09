@@ -7,10 +7,12 @@
             <i class="bi bi-list"></i> Категорії
         </button>
         <div class="container">
-            <div class="d-flex flex-grow-1 justify-content-center">
-                <form class="d-flex w-50">
-                    <input class="form-control me-2" type="search" placeholder="Пошук...">
-                </form>
+            <div class="container">
+                <div class="d-flex flex-grow-1 justify-content-center">
+                    <form class="d-flex w-50" asp-controller="Search" asp-action="SearchResults" method="get">
+                        <input class="form-control me-2" type="search" placeholder="Пошук..." name="searchTerm">
+                    </form>
+                </div>
             </div>
         </div>
     </nav>

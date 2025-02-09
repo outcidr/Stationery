@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Stationery.Data;
-using Stationery.Models;
 using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +14,7 @@ namespace Stationery.Models
                 serviceProvider.GetRequiredService<
                     DbContextOptions<StationeryContext>>()))
             {
-                
+
                 if (!context.Category.Any())
                 {
                     context.Category.AddRange(
@@ -45,13 +44,13 @@ namespace Stationery.Models
                             ImageUrl = "sets.png"
                         }
                     );
-                    context.SaveChanges(); 
+                    context.SaveChanges();
                 }
 
-                
+
                 if (!context.Product.Any())
                 {
-                    
+
                     var categories = context.Category.ToList();
 
                     context.Product.AddRange(
@@ -63,7 +62,7 @@ namespace Stationery.Models
                             StockQuantity = 100,
                             ImageUrl = "blue_pen.png",
                             IsFeatured = true,
-                            CategoryId = categories.FirstOrDefault(c => c.Name == "Ручки")?.CategoryId ?? 1 
+                            CategoryId = categories.FirstOrDefault(c => c.Name == "Ручки")?.CategoryId ?? 1
                         },
                         new Product
                         {
@@ -73,7 +72,7 @@ namespace Stationery.Models
                             StockQuantity = 150,
                             ImageUrl = "hb_pencil.png",
                             IsFeatured = false,
-                            CategoryId = categories.FirstOrDefault(c => c.Name == "Олівці")?.CategoryId ?? 2 
+                            CategoryId = categories.FirstOrDefault(c => c.Name == "Олівці")?.CategoryId ?? 2
                         },
                         new Product
                         {
@@ -83,7 +82,7 @@ namespace Stationery.Models
                             StockQuantity = 80,
                             ImageUrl = "notebook_клетка.png",
                             IsFeatured = true,
-                            CategoryId = categories.FirstOrDefault(c => c.Name == "Зошити")?.CategoryId ?? 3 
+                            CategoryId = categories.FirstOrDefault(c => c.Name == "Зошити")?.CategoryId ?? 3
                         },
                          new Product
                          {
@@ -93,7 +92,7 @@ namespace Stationery.Models
                              StockQuantity = 50,
                              ImageUrl = "a4_paper.png",
                              IsFeatured = false,
-                             CategoryId = categories.FirstOrDefault(c => c.Name == "Папір для друку")?.CategoryId ?? 4 
+                             CategoryId = categories.FirstOrDefault(c => c.Name == "Папір для друку")?.CategoryId ?? 4
                          },
                         new Product
                         {

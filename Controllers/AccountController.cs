@@ -4,6 +4,7 @@ using Stationery.Data;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Stationery.Areas.Admin.Models;
 
 namespace Stationery.Controllers
 {

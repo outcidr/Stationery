@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Stationery.Models.Admin;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Stationery.Models;
+using Stationery.Areas.Admin.Models;
 
 
 namespace Stationery.Data
 {
-    public class StationeryContext : DbContext
+    public class StationeryContext : IdentityDbContext<IdentityUser>
     {
         internal object User;
 
@@ -18,11 +20,10 @@ namespace Stationery.Data
         {
         }
 
-        public DbSet<Stationery.Models.Product> Product { get; set; } = default!;
-        public DbSet<Stationery.Models.Category> Category { get; set; } = default!;
-        public DbSet<Stationery.Models.Order> Order { get; set; } = default!;
-        public DbSet<Stationery.Models.CartItem> CartItem { get; set; } = default!;
-        public DbSet<Stationery.Models.User> Users { get; set; }
-        public DbSet<Stationery.Models.Admin.AdminAccount> AdminAccounts { get; set; }
+        public DbSet<Product> Product { get; set; } = default!;
+        public DbSet<Category> Category { get; set; } = default!;
+        public DbSet<Order> Order { get; set; } = default!;
+        public DbSet<CartItem> CartItem { get; set; } = default!;
+        public DbSet<User> Users { get; set; }
     }
 }

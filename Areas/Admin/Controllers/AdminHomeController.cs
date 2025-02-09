@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Stationery.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class AdminHomeController : Controller
     {
-        [Area("Admin")]
+        
         public IActionResult Index()
         {
-            return View("~/Areas/Admin/Views/AdminHome/Index.cshtml");
+            return View();
         }
     }
 }

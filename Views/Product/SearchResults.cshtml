@@ -1,14 +1,11 @@
-﻿@model IEnumerable<Product>
+﻿@model IEnumerable<Stationery.Models.Product>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "SearchResults";
 }
 
-<h1>Index</h1>
+<h1>Search Results for "@ViewBag.SearchTerm"</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -64,6 +61,10 @@
                     <a asp-action="Delete" asp-route-id="@item.ProductId">Delete</a>
                 </td>
             </tr>
+        }
+        @if (!Model.Any())
+        {
+            <tr><td colspan="7">No products found for "@ViewBag.SearchTerm"</td></tr>
         }
     </tbody>
 </table>

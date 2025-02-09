@@ -1,12 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace Stationery.Models.Admin
+namespace Stationery.Areas.Admin.Models
 {
-    public class ProductEdit
+    public class ProductCreateViewModel
     {
-        public int ProductId { get; set; }
-
         [Required(ErrorMessage = "Product Name is required")]
         [StringLength(100)]
         public string Name { get; set; }

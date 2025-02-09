@@ -11,5 +11,7 @@ namespace Stationery.Models
         public string PasswordHash { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? LastLogin { get; set; }
+
+        public bool IsAdmin { get; set; }
     }
 }

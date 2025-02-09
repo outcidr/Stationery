@@ -6,8 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Stationery.Models;
-using Stationery.Areas.Admin.Models;
-
 
 namespace Stationery.Data
 {

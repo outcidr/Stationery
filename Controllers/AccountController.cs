@@ -4,7 +4,6 @@ using Stationery.Data;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-using Stationery.Areas.Admin.Models;
 
 namespace Stationery.Controllers
 {
@@ -12,10 +11,12 @@ namespace Stationery.Controllers
     {
         private readonly StationeryContext _context;
         private readonly IHttpContextAccessor _httpContext;
+        
         public AccountController(StationeryContext context, IHttpContextAccessor httpContext)
         {
             _context = context;
             _httpContext = httpContext;
+            
         }
 
 
@@ -59,9 +60,17 @@ namespace Stationery.Controllers
                 await _context.SaveChangesAsync();
 
                 _httpContext.HttpContext.Session.SetInt32("UserId", user.Id);
+                if (model.IsAdmin)
+                {
+                    user.IsAdmin = true;
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync();
+                }
                 return RedirectToAction("Index", "Home");
             }
             return View(model);
+
+
         }
         //GET: /Account/Login
         public async Task<IActionResult> Login()

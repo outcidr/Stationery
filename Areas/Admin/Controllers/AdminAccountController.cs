@@ -1,82 +1,86 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Stationery.Areas.Admin.Models; 
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
+using Stationery.Models;
+using Stationery.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using System.Net.Http;
 
 namespace Stationery.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class AdminAccountController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
-
-        public AdminAccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        private readonly StationeryContext _context;
+        private readonly IHttpContextAccessor _httpContext;
+        public AdminAccountController(StationeryContext context, IHttpContextAccessor httpContext)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _context = context;
+            _httpContext = httpContext;
         }
 
-        [HttpGet]
-        public IActionResult Register()
+        //GET: /Admin/Account/Login
+        public async Task<IActionResult> Login()
         {
-            return View();
+            return View("~/Areas/Admin/Views/AdminAccount/Login.cshtml");
         }
 
+        //POST: /Admin/Account/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(AdminRegisterViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = model.Username, Email = model.Email }; // Create IdentityUser
-                var result = await _userManager.CreateAsync(user, model.Password); // Use UserManager to create user
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Username == model.UsernameOrEmail || u.Email == model.UsernameOrEmail);
+                if (user != null && VerifyPassword(model.Password, user.PasswordHash))
+                {
+                    ModelState.AddModelError("", "Неправильне Ім'я користувача або пароль");
+                    return View("~/Areas/Admin/Views/AdminAccount/Login.cshtml", model);
+                }
+                user.LastLogin = DateTime.UtcNow;
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+                _httpContext.HttpContext.Session.SetInt32("UserId", user.Id);
 
-                if (result.Succeeded)
+                if (model.RememberMe)
                 {
-                    // Optionally, you can assign a role to the admin user here, e.g., await _userManager.AddToRoleAsync(user, "Admin");
-                    await _signInManager.SignInAsync(user, isPersistent: false); // Sign in after registration
-                    return RedirectToAction("Index", "AdminHome", new { area = "Admin" }); // Redirect to Admin Home
+                    SetAuthCookie(user.Id);
                 }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description); // Add Identity errors to ModelState
-                }
+                return RedirectToAction("Index", "AdminHome", new { area = "Admin" });
             }
-            return View(model); // Return to Register view with errors
+            return View("~/Areas/Admin/Views/AdminAccount/Login.cshtml", model);
         }
 
-        [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
-
+        //POST: /Admin/Account/Logout
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(AdminLoginViewModel model)
+        public IActionResult Logout()
         {
-            if (ModelState.IsValid)
+            HttpContext.Session.Remove("UserId");
+            Response.Cookies.Delete("AuthCookie");
+            return RedirectToAction("Index", "AdminHome", new { area = "Admin" });
+        }
+
+        private string HashPassword(string password)
+        {
+            using var sha256 = System.Security.Cryptography.SHA256.Create();
+            var hashedBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            return Convert.ToBase64String(hashedBytes);
+        }
+
+        private bool VerifyPassword(string password, string storedHash)
+        {
+            return HashPassword(password) == storedHash;
+        }
+
+        private void SetAuthCookie(int userID)
+        {
+            var option = new CookieOptions
             {
-                var result = await _signInManager.PasswordSignInAsync(model.UsernameOrEmail, model.Password, model.RememberMe, lockoutOnFailure: false); // Use SignInManager for password login
-                if (result.Succeeded)
-                {
-                    return RedirectToAction("Index", "AdminHome", new { area = "Admin" }); // Redirect to Admin Home
-                }
-                ModelState.AddModelError(string.Empty, "Invalid login attempt."); // Login failed
-            }
-            return View(model);
-            // Return to Login view with error
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize] // Require authentication for Logout
-        public async Task<IActionResult> Logout()
-        {
-            await _signInManager.SignOutAsync(); // Use SignInManager to sign out
-            return RedirectToAction("Index", "Home", new { area = "" }); // Redirect to Home page
+                Expires = DateTime.Now.AddDays(7),
+                HttpOnly = true
+            };
         }
     }
 }

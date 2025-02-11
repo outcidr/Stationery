@@ -4,6 +4,7 @@ using Stationery.Data;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Stationery.Controllers
 {
@@ -11,21 +12,18 @@ namespace Stationery.Controllers
     {
         private readonly StationeryContext _context;
         private readonly IHttpContextAccessor _httpContext;
-        
+
         public AccountController(StationeryContext context, IHttpContextAccessor httpContext)
         {
             _context = context;
             _httpContext = httpContext;
-            
         }
-
 
 
         // GET: /Account/Register
         public async Task<IActionResult> Register()
         {
-            // Fetch categories for layout
-            ViewBag.Categories = await _context.Category.ToListAsync();
+            ViewBag.Categories = await _context.Category.ToListAsync();
             return View();
         }
 
@@ -34,8 +32,7 @@ namespace Stationery.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            // Fetch categories for layout (even on postback)
-            ViewBag.Categories = await _context.Category.ToListAsync();
+            ViewBag.Categories = await _context.Category.ToListAsync();
 
             if (ModelState.IsValid)
             {
@@ -54,53 +51,97 @@ namespace Stationery.Controllers
                     Username = model.Username,
                     Email = model.Email,
                     PasswordHash = HashPassword(model.Password),
-                    CreatedAt = DateTime.UtcNow
-                };
+                    CreatedAt = DateTime.UtcNow,
+                    Role = UserRole.User 
+                };
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
                 _httpContext.HttpContext.Session.SetInt32("UserId", user.Id);
-                if (model.IsAdmin)
-                {
-                    user.IsAdmin = true;
-                    _context.Users.Update(user);
-                    await _context.SaveChangesAsync();
-                }
-                return RedirectToAction("Index", "Home");
+
             }
-            return View(model);
+            return RedirectToAction("Index", "Home"); // Redirect to home after successful registration
+        }
 
 
+        // GET: /Account/AdminRegister
+        public async Task<IActionResult> AdminRegister()
+        {
+            ViewBag.Categories = await _context.Category.ToListAsync();
+            return View();
         }
+
+        // POST: /Account/AdminRegister
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AdminRegister(RegisterViewModel model)
+        {
+            ViewBag.Categories = await _context.Category.ToListAsync();
+
+            if (ModelState.IsValid)
+            {
+                if (await _context.Users.AnyAsync(u => u.Username == model.Username))
+                {
+                    ModelState.AddModelError("", "Username already exists");
+                    return View(model);
+                }
+                if (await _context.Users.AnyAsync(u => u.Email == model.Email))
+                {
+                    ModelState.AddModelError("", "Email already registered");
+                    return View(model);
+                }
+                var adminUser = new User
+                {
+                    Username = model.Username,
+                    Email = model.Email,
+                    PasswordHash = HashPassword(model.Password),
+                    CreatedAt = DateTime.UtcNow,
+                    Role = UserRole.Admin 
+                };
+                _context.Users.Add(adminUser);
+                await _context.SaveChangesAsync();
+
+                _httpContext.HttpContext.Session.SetInt32("UserId", adminUser.Id);
+
+            }
+            return RedirectToAction("Index", "Home"); // Redirect to home after successful registration
+        }
+
+
         //GET: /Account/Login
         public async Task<IActionResult> Login()
         {
-            // Fetch categories for layout
-            ViewBag.Categories = await _context.Category.ToListAsync();
+            ViewBag.Categories = await _context.Category.ToListAsync();
             return View();
         }
+
         //POST: /Account/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            // Fetch categories for layout (even on postback)
-            ViewBag.Categories = await _context.Category.ToListAsync();
+            ViewBag.Categories = await _context.Category.ToListAsync();
 
             if (ModelState.IsValid)
             {
                 var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Username == model.UsernameOrEmail ||
-                u.Email == model.UsernameOrEmail);
+                .FirstOrDefaultAsync(u => u.Username == model.UsernameOrEmail || u.Email == model.UsernameOrEmail);
+
                 if (user == null || !VerifyPassword(model.Password, user.PasswordHash))
                 {
                     ModelState.AddModelError("", "Invalid username or password");
                     return View(model);
                 }
+
                 user.LastLogin = DateTime.UtcNow;
                 _context.Users.Update(user);
                 await _context.SaveChangesAsync();
+
                 _httpContext.HttpContext.Session.SetInt32("UserId", user.Id);
+                // Store Role in session if needed for authorization checks later
+                _httpContext.HttpContext.Session.SetString("UserRole", user.Role.ToString());
+
+
                 if (model.RememberMe)
                 {
                     SetAuthCookie(user.Id);
@@ -109,15 +150,18 @@ namespace Stationery.Controllers
             }
             return View(model);
         }
+
         //POST: /Account/Logout
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Logout()
         {
             HttpContext.Session.Remove("UserId");
-            Response.Cookies.Delete("AuthCookie");
+            HttpContext.Session.Remove("UserRole"); // Remove role from session on logout
+            Response.Cookies.Delete("AuthCookie");
             return RedirectToAction("Index", "Home");
         }
+
 
         private string HashPassword(string password)
         {
@@ -138,8 +182,10 @@ namespace Stationery.Controllers
                 Expires = DateTime.UtcNow.AddDays(7),
                 HttpOnly = true
             };
-        }
+            
+        }
 
 
     }
+
 }

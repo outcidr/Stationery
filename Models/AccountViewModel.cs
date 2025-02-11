@@ -5,10 +5,12 @@ namespace Stationery.Models
     public class LoginViewModel
     {
         [Required(ErrorMessage = "Username or Email is required")]
+        [Display(Name = "Username or Email")]
         public string UsernameOrEmail { get; set; }
 
         [Required(ErrorMessage = "Password is required")]
         [DataType(DataType.Password)]
+        [Display(Name = "Password")]
         public string Password { get; set; }
 
         [Display(Name = "Remember me")]
@@ -33,6 +35,7 @@ namespace Stationery.Models
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Passwords do not match")]
         public string ConfirmPassword { get; set; }
-        public bool IsAdmin { get; internal set; }
     }
+
+
 }

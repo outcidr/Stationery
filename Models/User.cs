@@ -2,6 +2,14 @@
 
 namespace Stationery.Models
 {
+
+    public enum UserRole
+    {
+        Admin,
+        User
+    }
+
+
     public class User
     {
         [Key]
@@ -11,7 +19,6 @@ namespace Stationery.Models
         public string PasswordHash { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? LastLogin { get; set; }
-
-        public bool IsAdmin { get; set; }
+        public UserRole Role { get; set; }
     }
 }
